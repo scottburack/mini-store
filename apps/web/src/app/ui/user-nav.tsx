@@ -1,5 +1,7 @@
 import Link from "next/link";
 import { getCurrentUser } from "@/app/lib/auth";
+import { logout } from "@/app/lib/auth-actions";
+
 
 export async function UserNav() {
   const user = await getCurrentUser();
@@ -16,7 +18,11 @@ export async function UserNav() {
   return (
     <div className="flex items-center gap-4 text-sm">
       <span className="text-zinc-500">{user.email}</span>
-      {/* Log out button arrives in Step 7 */}
+      <form action={logout}>
+        <button type="submit" className="hover:underline">
+          Log out
+        </button>
+      </form>
     </div>
   );
 }

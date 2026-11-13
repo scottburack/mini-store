@@ -1,7 +1,7 @@
 import { notFound } from "next/navigation";
 import type { Paginated, Product } from "./types";
 
-const API_URL = process.env.API_URL ?? "http://localhost:3001";
+export const API_URL = process.env.API_URL ?? "http://localhost:3001";
 
 async function apiGet<T>(path: string, notFoundOn: number[] = [404]): Promise<T> {
   const res = await fetch(`${API_URL}${path}`);

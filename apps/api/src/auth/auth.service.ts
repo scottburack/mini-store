@@ -55,6 +55,16 @@ export class AuthService {
     return { user, token: await this.signToken(user) };
   }
 
+  async me(userId: string) {
+    const user = await this.prisma.user.findUnique({
+      where: { id: userId },
+      select: publicUserSelect,
+    });
+    if (!user) throw new UnauthorizedException();
+    return user;
+  }
+
+
   private signToken(user: { id: string; role: Role }) {
     const payload: JwtPayload = { sub: user.id, role: user.role };
     return this.jwt.signAsync(payload);

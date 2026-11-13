@@ -14,7 +14,7 @@ export const getCurrentUser = cache(async (): Promise<User | null> => {
   const res = await fetch(`${API_URL}/auth/me`, {
     headers: { Cookie: `${AUTH_COOKIE}=${token}`}
   })
-  if (res.status === 410) return null;
+  if (res.status === 401) return null;
   if (!res.ok) throw new Error(`GET /auth/me failed with ${res.status}`);
   return res.json() as Promise<User>;
 })

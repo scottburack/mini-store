@@ -2,6 +2,9 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
+import { Suspense } from "react";
+import { UserNav } from "@/app/ui/user-nav";
+
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -30,6 +33,9 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
             <Link href="/" className="font-semibold">
               Mini Store
             </Link>
+            <Suspense fallback={<span className="text-sm text-zinc-400">…</span>}>
+              <UserNav />
+            </Suspense>
           </div>
         </header>
         {children}

@@ -15,3 +15,10 @@ export type Paginated<T> = {
   total: number;
   totalPages: number;
 };
+
+export type User = {
+  id: string;
+  email: string;
+  role: "CUSTOMER" | "ADMIN";
+  createdAt: string;
+}

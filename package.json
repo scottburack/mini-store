@@ -14,5 +14,8 @@
     "build": "npm run build --workspaces",
     "lint": "npm run lint --workspaces",
     "test": "npm run test -w api"
+  },
+  "allowScripts": {
+    "argon2@0.45.2": true
   }
 }

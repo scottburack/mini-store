@@ -16,6 +16,8 @@ const cartSelect = {
   },
 } satisfies Prisma.CartSelect;
 
+const MAX_LINE_QUANTITY = 99;
+
 type CartRow = Prisma.CartGetPayload<{ select: typeof cartSelect }>;
 
 /** Who the cart belongs to: a logged-in user, or a guest identified by the cart cookie. */
@@ -79,6 +81,49 @@ export class CartService {
       await this.prisma.cartItem.deleteMany({ where: { cartId, productId } });
     }
     return this.getCart(owner);
+  }
+
+    /** Moves a guest cart's items into the user's cart, then deletes the guest cart. */
+  async mergeGuestCart(userId: string, guestCartId: string) {
+    await this.prisma.$transaction(async (tx) => {
+      const guest = await tx.cart.findFirst({
+        where: { id: guestCartId, userId: null },
+        select: {
+          id: true,
+          items: {
+            select: { productId: true, quantity: true, product: { select: { stock: true } } },
+          },
+        },
+      });
+      if (!guest) return;
+
+      const userCart = await tx.cart.upsert({
+        where: { userId },
+        create: { userId },
+        update: {},
+        select: { id: true },
+      });
+
+      for (const item of guest.items) {
+        const key = { cartId_productId: { cartId: userCart.id, productId: item.productId } };
+        const existing = await tx.cartItem.findUnique({ where: key, select: { quantity: true } });
+        const quantity = Math.min(
+          (existing?.quantity ?? 0) + item.quantity,
+          item.product.stock,
+          MAX_LINE_QUANTITY,
+        );
+        if (quantity < 1) continue; // out of stock now: drop it
+
+        await tx.cartItem.upsert({
+          where: key,
+          create: { cartId: userCart.id, productId: item.productId, quantity },
+          update: { quantity },
+        });
+      }
+
+      // Cascade deletes the guest cart's items too.
+      await tx.cart.delete({ where: { id: guest.id } });
+    });
   }
 
   private async findCartId(owner: CartOwner): Promise<string | null> {

@@ -22,3 +22,20 @@ export type User = {
   role: "CUSTOMER" | "ADMIN";
   createdAt: string;
 }
+
+export type CartItem = {
+  productId: string;
+  name: string;
+  imageUrl: string | null;
+  unitPriceCents: number;
+  quantity: number;
+  lineTotalCents: number;
+  stock: number;
+}
+
+export type Cart = {
+  id: string | null;
+  items: CartItem[];
+  itemCount: number;
+  subtotalCents: number;
+}

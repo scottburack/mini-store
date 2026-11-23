@@ -4,6 +4,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { Suspense } from "react";
 import { UserNav } from "@/app/ui/user-nav";
+import { CartLink } from "./ui/cart-link";
 
 
 const geistSans = Geist({
@@ -36,6 +37,9 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
             <Suspense fallback={<span className="text-sm text-zinc-400">…</span>}>
               <UserNav />
             </Suspense>
+            <Suspense fallback={<span className="text-sm text-zinc-400">Cart</span>}>
+              <CartLink />
+            </Suspense>  
           </div>
         </header>
         {children}

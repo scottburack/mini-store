@@ -1,6 +1,7 @@
 import Image from "next/image";
 import { getProduct } from "@/app/lib/api";
 import { formatPrice } from "@/app/lib/format";
+import { AddToCartButton } from "./add-to-cart-button";
 
 type Props = {
   params: Promise<{ id: string }>;
@@ -28,7 +29,7 @@ export async function ProductDetail({ params }: Props) {
         <p className="mt-6 text-sm text-zinc-500">
           {product.stock > 0 ? `${product.stock} in stock` : "Sold out"}
         </p>
-        {/* Add-to-cart button arrives in Slice 3 */}
+        <AddToCartButton productId={product.id} soldOut={product.stock === 0} />
       </div>
     </article>
   );
